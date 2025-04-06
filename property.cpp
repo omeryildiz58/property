@@ -2,13 +2,40 @@
 #include "property.h"
 
 struct dene{
-	//dene& operator+=(const dene& d) {
-	//	return *this;
-	//}
+	dene& operator+=(const dene& d) {
+		return *this;
+	}
 
-	//const dene& operator+(const dene&) {
-	//	return *this;
-	//}
+	dene& operator+=(dene& d) {
+		return *this;
+	}
+
+	double	operator[](int a) {
+		return 5.0;
+	}
+
+	int operator+(const dene&) {
+		return 5;
+	}
+
+	bool operator==(const dene&) {
+		return true;
+	}
+
+	bool operator==(bool a) {
+		return a;
+	}
+
+	bool operator==(int a) {
+		return a==3;
+	}
+
+	bool operator==(const dene&) const{
+		return true;
+	}
+
+	dene() {}
+	dene(const dene&) {}
 };
 
 class MyClass {
@@ -22,7 +49,7 @@ class MyClass {
 public:
 	MyClass() : value_(0) {}
 
-	inline const int& getValue() const {
+	inline int& getValue() {
 		return value_;
 	}
 
@@ -57,8 +84,20 @@ int main() {
 	//obj.valueProperty2 = 5;
 	//obj.valueProperty1 += 5;
 	std::cout << "Value: " << (obj.valueProperty + 5) << std::endl;
-	const dene ddd = {};
+	dene ddd = {};
 	MyClass	obj1;
-	obj1.valuePropertyaaa += 5;
+	MyClass	obj2;
+	obj1.valueProperty += 5;
+
+	obj1.valuePropertyaaa.operator dene &() += ddd;
+	obj1.valuePropertyaaa += ddd;
+
+	auto aaa = obj1.valuePropertyaaa + ddd;
+	auto aaa1 = obj1.valuePropertyaaa + obj2.valuePropertyaaa;
+
+	obj1.valuePropertyaaa == ddd;// obj2.valuePropertyaaa;
+
+	//auto afdaa=obj1.valuePropertyaaa[5];
+
 	return 0;
 }

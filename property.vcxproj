@@ -130,6 +130,7 @@
     <ClCompile Include="property.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="checkoperator.h" />
     <ClInclude Include="property.h" />
   </ItemGroup>
   <ItemGroup>
