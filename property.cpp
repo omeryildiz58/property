@@ -10,7 +10,7 @@ struct dene{
 		return *this;
 	}
 
-	double	operator[](int a) {
+	double	operator[](const int a) {
 		return 5.0;
 	}
 
@@ -22,13 +22,17 @@ struct dene{
 		return true;
 	}
 
-	bool operator==(bool a) {
-		return a;
+	bool operator==(const int&) {
+		return true;
 	}
 
-	bool operator==(int a) {
-		return a==3;
-	}
+	//bool operator==(bool a) {
+	//	return a;
+	//}
+
+	//bool operator==(int a) {
+	//	return a==3;
+	//}
 
 	bool operator==(const dene&) const{
 		return true;
@@ -95,9 +99,9 @@ int main() {
 	auto aaa = obj1.valuePropertyaaa + ddd;
 	auto aaa1 = obj1.valuePropertyaaa + obj2.valuePropertyaaa;
 
-	obj1.valuePropertyaaa == ddd;// obj2.valuePropertyaaa;
-
-	//auto afdaa=obj1.valuePropertyaaa[5];
+	obj1.valuePropertyaaa == 3;// obj2.valuePropertyaaa;
+	int aa = 5;
+	auto afdaa = obj1.valuePropertyaaa[5];
 
 	return 0;
 }
