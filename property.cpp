@@ -18,9 +18,9 @@ struct dene{
 		return 5;
 	}
 
-	bool operator==(const dene&) {
-		return true;
-	}
+	//bool operator==(const dene&) {
+	//	return true;
+	//}
 
 	bool operator==(const int&) {
 		return true;
@@ -99,9 +99,9 @@ int main() {
 	auto aaa = obj1.valuePropertyaaa + ddd;
 	auto aaa1 = obj1.valuePropertyaaa + obj2.valuePropertyaaa;
 
-	obj1.valuePropertyaaa == 3;// obj2.valuePropertyaaa;
-	int aa = 5;
-	auto afdaa = obj1.valuePropertyaaa[5];
+	//obj1.valuePropertyaaa == 3;// obj2.valuePropertyaaa;
+	//int aa = 5;
+	//auto afdaa = obj1.valuePropertyaaa[5];
 
 	return 0;
 }
