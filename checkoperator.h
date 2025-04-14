@@ -69,12 +69,12 @@ class has_right_shift<T, U, void_t<decltype(declval<T&&>() >> declval<U>())>> : 
 template<typename, typename, typename = void>
 class has_less_than_equal : public false_type {};
 template<typename T, typename U>
-class has_less_than_equal<T, U, void_t<decltype(declval<T&&>() <= declval<U>())>> : public true_type {};
+class has_less_than_equal<T, U, void_t<decltype(declval<T&&>() <= declval<U&&>())>> : public true_type {};
 // Bir sýnýfýn operator>='e sahip olup olmadýðýný kontrol eden yardýmcý þablon
 template<typename, typename, typename = void>
 class has_greater_than_equal : public false_type {};
 template<typename T, typename U>
-class has_greater_than_equal<T, U, void_t<decltype(declval<T&&>() >= declval<U>())>> : public true_type {};
+class has_greater_than_equal<T, U, void_t<decltype(declval<T&&>() >= declval<U&&>())>> : public true_type {};
 // Bir sýnýfýn operator=='e sahip olup olmadýðýný kontrol eden yardýmcý þablon
 template<typename, typename, typename = void>
 class has_equal : public false_type {};
@@ -84,28 +84,28 @@ class has_equal<T, U, void_t<decltype(declval<T&&>() == declval<U&&>())>> : publ
 template<typename, typename, typename = void>
 class has_not_equal : public false_type {};
 template<typename T, typename U>
-class has_not_equal<T, U, void_t<decltype(declval<T&&>() != declval<U>())>> : public true_type {};
+class has_not_equal<T, U, void_t<decltype(declval<T&&>() != declval<U&&>())>> : public true_type {};
 // Bir sýnýfýn operator<'e sahip olup olmadýðýný kontrol eden yardýmcý þablon
 template<typename, typename, typename = void>
 class has_less : public false_type {};
 template<typename T, typename U>
-class has_less<T, U, void_t<decltype(declval<T&&>() < declval<U>())>> : public true_type {};
+class has_less<T, U, void_t<decltype(declval<T&&>() < declval<U&&>())>> : public true_type {};
 // Bir sýnýfýn operator>'e sahip olup olmadýðýný kontrol eden yardýmcý þablon
 template<typename, typename, typename = void>
 class has_greater : public false_type {};
 template<typename T, typename U>
-class has_greater<T, U, void_t<decltype(declval<T&&>() > declval<U>())>> : public true_type {
+class has_greater<T, U, void_t<decltype(declval<T&&>() > declval<U&&>())>> : public true_type {
 };
 // Bir sýnýfýn operator<='e sahip olup olmadýðýný kontrol eden yardýmcý þablon
 template<typename, typename, typename = void>
 class has_less_equal : public false_type {};
 template<typename T, typename U>
-class has_less_equal<T, U, void_t<decltype(declval<T&&>() <= declval<U>())>> : public true_type {};
+class has_less_equal<T, U, void_t<decltype(declval<T&&>() <= declval<U&&>())>> : public true_type {};
 // Bir sýnýfýn operator>='e sahip olup olmadýðýný kontrol eden yardýmcý þablon
 template<typename, typename, typename = void>
 class has_greater_equal : public false_type {};
 template<typename T, typename U>
-class has_greater_equal<T, U, void_t<decltype(declval<T&&>() >= declval<U>())>> : public true_type {};
+class has_greater_equal<T, U, void_t<decltype(declval<T&&>() >= declval<U&&>())>> : public true_type {};
 
 
 
@@ -113,7 +113,7 @@ class has_greater_equal<T, U, void_t<decltype(declval<T&&>() >= declval<U>())>> 
 template<typename, typename, typename = void>
 class has_subscript : public false_type {};
 template<typename T, typename... Args>
-class has_subscript<T, tuple<Args...>, void_t<decltype(declval<T&&>()[declval<Args&>()...])>> : public true_type {};
+class has_subscript<T, tuple<Args...>, void_t<decltype(declval<T&&>()[declval<Args&&>()...])>> : public true_type {};
 
 // Bir sýnýfýn operator()'e sahip olup olmadýðýný kontrol eden yardýmcý þablon
 template<typename, typename, typename = void>
