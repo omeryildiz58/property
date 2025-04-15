@@ -8,8 +8,8 @@ template<typename T>
 concept Arithmetic = is_arithmetic_v<T> || is_pointer_v<T>;
 
 template<auto getter, auto setter = nullptr>
+	requires(is_member_function_pointer_v<decltype(getter)> && (setter == nullptr || is_member_function_pointer_v<decltype(setter)>))
 class Property {
-
 	template<class T>
 	class GetterInfo;
 
@@ -28,29 +28,43 @@ class Property {
 	class GetterInfo<VT(C::*)() volatile> : public GetterInfo<VT(C::*)()> {}; //volatile GetterInfo pointer
 
 public:
+	Property(const Property&) = delete;
+	Property& operator=(const Property&) = delete;
+	Property(Property&&) = delete;
+	Property& operator=(Property&&) = delete;
 	using ClassType = GetterInfo<decltype(getter)>::ClassType;
 	using GetterType = GetterInfo<decltype(getter)>::ReturnType;
 	using ValueType = remove_reference<GetterType>::type;
 	Property(ClassType& instance) : instance_(instance) {}
-	template <auto S = setter, typename enable_if_t < S != nullptr, int > = 0>
+	template <auto S = setter>
+		requires(S != nullptr)
 	Property(ClassType& instance, const ValueType& value) : instance_(instance) { set(value); }
 
-	inline ValueType& get() {
+	inline ValueType& get() & {
 		return (instance_.*getter)();
 	}
 
-	inline ValueType& get() const {
+	inline ValueType& get() const & {
 		return (instance_.*getter)();
 	}
 
 	template<auto S = setter>
-	inline enable_if_t<S != nullptr, void> set(const ValueType& value) const {
+		requires(S != nullptr)
+	inline void set(const ValueType& value) {
 		(instance_.*setter)(value);
 	}
+
 	template<auto S = setter>
-	inline enable_if_t<S != nullptr, Property&> operator=(const ValueType& value) const {
+		requires(S != nullptr)
+	inline auto operator=(ValueType& value) {
 		set(value);
 		return *this;
+	}
+
+	template<typename T,auto S = setter>
+		requires(S != nullptr && !is_same_v<T, ValueType> && has_assignment<ValueType&&, T&&>::value)
+	inline auto operator=(T&& value) {
+		return get() = value;
 	}
 
 	inline operator ValueType& () {
@@ -61,18 +75,23 @@ public:
 		return get();
 	}
 
+	template<typename T>
+		requires(!is_same_v<T, ValueType>&& has_implicit_conversion_operator<ValueType&&, T&&>::value)
+	inline operator T() {
+		return static_cast<T>(get());
+	}
+
 	template<NonArithmetic U>
 		requires(has_plus_equal<ValueType&&, U&&>::value)
 	inline auto operator+=(U&& value) {
-		get() += value;
-		return *this;
+		return get() += value;
 	}
 
 	template<NonArithmetic U>
 		requires(has_plus<ValueType&&, U&&>::value && !has_plus_equal<ValueType&&, U&&>::value)
 	inline auto operator+=(U&& value) {
 		set(get() + value);
-		return *this;
+		return get();
 	}
 
 	template<NonArithmetic U>
@@ -85,14 +104,13 @@ public:
 	template<NonArithmetic U>
 		requires(has_minus_equal<ValueType&&, U&&>::value)
 	inline auto operator-=(U&& value) {
-		get() -= value;
-		return *this;
+		return get() -= value;
 	}
 	template<NonArithmetic U>
 		requires(!has_minus_equal<ValueType&&, U&&>::value&& has_minus<ValueType&&, U&&>::value)
 	inline auto operator-=(U&& value) {
 		set(get() - value);
-		return *this;
+		return get();
 	}
 	template<NonArithmetic U>
 		requires(!has_minus_equal<ValueType&&, U&&>::value && !has_minus<ValueType&&, U&&>::value)
@@ -103,14 +121,13 @@ public:
 	template<NonArithmetic U>
 		requires(has_multiply_equal<ValueType&&, U&&>::value)
 	inline auto operator*=(U&& value) {
-		get() *= value;
-		return *this;
+		return get() *= value;
 	}
 	template<NonArithmetic U>
 		requires(!has_multiply_equal<ValueType&&, U&&>::value&& has_multiply<ValueType&&, U&&>::value)
 	inline auto operator*=(U&& value) {
 		set(get() * value);
-		return *this;
+		return get();
 	}
 	template<NonArithmetic U>
 		requires(!has_multiply_equal<ValueType&&, U&&>::value && !has_multiply<ValueType&&, U&&>::value)
@@ -121,14 +138,13 @@ public:
 	template<NonArithmetic U>
 		requires(has_divide_equal<ValueType&&, U&&>::value)
 	inline auto operator/=(U&& value) {
-		get() /= value;
-		return *this;
+		return get() /= value;
 	}
 	template<NonArithmetic U>
 		requires(!has_divide_equal<ValueType&&, U&&>::value&& has_divide<ValueType&&, U&&>::value)
 	inline auto operator/=(U&& value) {
 		set(get() / value);
-		return *this;
+		return get();
 	}
 	template<NonArithmetic U>
 		requires(!has_divide_equal<ValueType&&, U&&>::value && !has_divide<ValueType&&, U&&>::value)
@@ -139,14 +155,13 @@ public:
 	template<NonArithmetic U>
 		requires(has_modulus_equal<ValueType&&, U&&>::value)
 	inline auto operator%=(U&& value) {
-		get() %= value;
-		return *this;
+		return get() %= value;
 	}
 	template<NonArithmetic U>
 		requires(!has_modulus_equal<ValueType&&, U&&>::value&& has_modulus<ValueType&&, U&&>::value)
 	inline auto operator%=(U&& value) {
 		set(get() % value);
-		return *this;
+		return get();
 	}
 	template<NonArithmetic U>
 		requires(!has_modulus_equal<ValueType&&, U&&>::value && !has_modulus<ValueType&&, U&&>::value)
@@ -157,14 +172,13 @@ public:
 	template<NonArithmetic U>
 		requires(has_bitwise_and_equal<ValueType&&, U&&>::value)
 	inline auto operator&=(U&& value) {
-		get() &= value;
-		return *this;
+		return get() &= value;
 	}
 	template<NonArithmetic U>
 		requires(!has_bitwise_and_equal<ValueType&&, U&&>::value&& has_bitwise_and<ValueType&&, U&&>::value)
 	inline auto operator&=(U&& value) {
 		set(get() & value);
-		return *this;
+		return get();
 	}
 	template<NonArithmetic U>
 		requires(!has_bitwise_and_equal<ValueType&&, U&&>::value && !has_bitwise_and<ValueType&&, U&&>::value)
@@ -175,14 +189,13 @@ public:
 	template<NonArithmetic U>
 		requires(has_bitwise_or_equal<ValueType&&, U&&>::value)
 	inline auto operator|=(U&& value) {
-		get() |= value;
-		return *this;
+		return get() |= value;
 	}
 	template<NonArithmetic U>
 		requires(!has_bitwise_or_equal<ValueType&&, U&&>::value&& has_bitwise_or<ValueType&&, U&&>::value)
 	inline auto operator|=(U&& value) {
 		set(get() | value);
-		return *this;
+		return get();
 	}
 	template<NonArithmetic U>
 		requires(!has_bitwise_or_equal<ValueType&&, U&&>::value && !has_bitwise_or<ValueType&&, U&&>::value)
@@ -193,14 +206,13 @@ public:
 	template<NonArithmetic U>
 		requires(has_bitwise_xor_equal<ValueType&&, U&&>::value)
 	inline auto operator^=(U&& value) {
-		get() ^= value;
-		return *this;
+		return get() ^= value;
 	}
 	template<NonArithmetic U>
 		requires(!has_bitwise_xor_equal<ValueType&&, U&&>::value&& has_bitwise_xor<ValueType&&, U&&>::value)
 	inline auto operator^=(U&& value) {
 		set(get() ^ value);
-		return *this;
+		return get();
 	}
 	template<NonArithmetic U>
 		requires(!has_bitwise_xor_equal<ValueType&&, U&&>::value && !has_bitwise_xor<ValueType&&, U&&>::value)
@@ -211,14 +223,13 @@ public:
 	template<NonArithmetic U>
 		requires(has_left_shift_equal<ValueType&&, U&&>::value)
 	inline auto operator<<=(U&& value) {
-		get() <<= value;
-		return *this;
+		return get() <<= value;
 	}
 	template<NonArithmetic U>
 		requires(!has_left_shift_equal<ValueType&&, U&&>::value&& has_left_shift<ValueType&&, U&&>::value)
 	inline auto operator<<=(U&& value) {
 		set(get() << value);
-		return *this;
+		return get();
 	}
 	template<NonArithmetic U>
 		requires(!has_left_shift_equal<ValueType&&, U&&>::value && !has_left_shift<ValueType&&, U&&>::value)
@@ -229,14 +240,13 @@ public:
 	template<NonArithmetic U>
 		requires(has_right_shift_equal<ValueType&&, U&&>::value)
 	inline auto operator>>=(U&& value) {
-		get() >>= value;
-		return *this;
+		return get() >>= value;
 	}
 	template<NonArithmetic U>
 		requires(!has_right_shift_equal<ValueType&&, U&&>::value&& has_right_shift<ValueType&&, U&&>::value)
 	inline auto operator>>=(U&& value) {
 		set(get() >> value);
-		return *this;
+		return value;
 	}
 	template<NonArithmetic U>
 		requires(!has_right_shift_equal<ValueType&&, U&&>::value && !has_right_shift<ValueType&&, U&&>::value)
@@ -247,7 +257,7 @@ public:
 
 	template<NonArithmetic U>
 		requires (has_plus<ValueType&&, U&&>::value)
-	inline auto operator+(U&& value) {
+	inline auto&& operator+(U&& value) {
 		return get() + value;
 	}
 

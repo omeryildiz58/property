@@ -2,6 +2,20 @@
 #include <type_traits>
 using namespace std;
 
+// Bir sýnýfýn implicit dönüþüm operatörüne sahip olup olmadýðýný kontrol eden yardýmcý þablon
+template<typename From, typename To, typename = void>
+class has_implicit_conversion_operator : public std::false_type {};
+
+template<typename From, typename To>
+class has_implicit_conversion_operator<From, To, std::void_t<decltype(static_cast<To>(std::declval<From>()))>> : public std::true_type {};
+
+// Bir sýnýfýn operator='e sahip olup olmadýðýný kontrol eden yardýmcý þablon
+template<typename T, typename U, typename = void>
+class has_assignment : public false_type {};
+
+template<typename T, typename U>
+class has_assignment<T, U, void_t<decltype(declval<T&&>() = declval<U&&>())>> : public true_type {};
+
 // Bir sýnýfýn operator+'e sahip olup olmadýðýný kontrol eden yardýmcý þablon
 template<typename, typename, typename = void>
 class has_plus : public false_type {};

@@ -2,20 +2,23 @@
 #include "property.h"
 
 struct dene{
-	dene& operator+=(const dene& d) {
-		return *this;
-	}
+	//dene& operator+=(const dene& d) {
+	//	return *this;
+	//}
 
-	dene& operator+=(dene& d) {
-		return *this;
-	}
+	//dene& operator+=(dene& d) {
+	//	return *this;
+	//}
 
 	double	operator()(int a) {
 		return 5.0;
 	}
 
-	int operator+(const dene&) {
-		return 5;
+	//int operator+(const dene&) {
+	//	return 5;
+	//}
+	dene & operator+(const dene&) {
+		return *this;
 	}
 
 	//bool operator==(const dene&) {
@@ -43,10 +46,18 @@ struct dene{
 	
 	bool operator>=(const dene&) const {
 		return true;
+	}	
+	bool operator=(const dene&) const {
+		return true;
+	}
+	
+	bool operator=(const int&) const {
+		return true;
 	}
 
 	dene() {}
 	dene(const dene&) {}
+ dene(const dene&&) {}
 };
 
 class MyClass {
@@ -100,11 +111,13 @@ int main() {
 	MyClass	obj2;
 	obj1.valueProperty += 5;
 
-	obj1.valuePropertyaaa.operator dene &() += ddd;
-	obj1.valuePropertyaaa += ddd;
+	//obj1.valuePropertyaaa.operator dene &() += ddd;
+	auto ssss=obj1.valuePropertyaaa += ddd;
 
 	auto aaa = obj1.valuePropertyaaa + ddd;
 	auto aaa1 = obj1.valuePropertyaaa + obj2.valuePropertyaaa;
+
+	obj1.valuePropertyaaa = 5;
 
 	obj1.valuePropertyaaa < 3;
 	obj1.valuePropertyaaa >= obj2.valuePropertyaaa;
