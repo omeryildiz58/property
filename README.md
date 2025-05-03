@@ -47,13 +47,29 @@ int main() {
 ## Notes
 
 - Lambdas are not supported in this version for getter and setter functions.
-- Deducing the type of the property is not supported.
+- `Deducing this` is not supported for getter and setter functions.
 - only this initialization with `this` is supported.
 
 ```cpp
 // Example of unsupported feature
 Property myProperty = 10; // Error: Type deduction not supported
 ```
+
+```cpp
+// Example of unsupported feature
+class MyClass {
+	int myProperty_;
+public:
+	MyClass(){}
+	int& getMyProperty(this self) {//	Error: Deducing this not supported
+		return self.myProperty_;
+	}
+	Property<&getMyProperty> myProperty=this;
+
+};
+
+```
+
 
 ```cpp
 // Example of unsupported feature
