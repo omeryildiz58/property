@@ -127,14 +127,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="property.cpp" />
+    <ClCompile Include="examples\example2.cpp" />
+    <ClCompile Include="examples\example1.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="checkoperator.h" />
-    <ClInclude Include="property.h" />
+    <ClInclude Include="includes\checkoperator.h" />
+    <ClInclude Include="includes\property.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="notlar.md" />
+    <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="LICENSE.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

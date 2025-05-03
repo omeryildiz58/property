@@ -1,5 +1,5 @@
 #include <iostream>
-#include "property.h"
+#include "../includes/property.h"
 
 struct dene{
 	//dene& operator+=(const dene& d) {
@@ -112,10 +112,10 @@ public:
 
 };
 
-dene&& aabh() {
-	MyClass	obj1;
-	return move(obj1.valuePropertyaaa.operator dene &());
-}
+//dene&& aabh() {
+//	MyClass	obj1;
+//	return move(obj1.valuePropertyaaa.operator dene &());
+//}
 
  
 int main() {
@@ -136,7 +136,7 @@ int main() {
 	
 	auto sadasd = obj2.valuePropertyaaa = obj1.valuePropertyaaa;
 
-	dene ss = aabh();
+	//dene ss = aabh();
 
 	obj1.valuePropertyaaa = 5;
 
