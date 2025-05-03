@@ -17,8 +17,8 @@ struct dene{
 	//int operator+(const dene&) {
 	//	return 5;
 	//}
-	dene & operator+(const dene&) {
-		return *this;
+	dene && operator*(const dene&) {
+		return move(*this);
 	}
 
 	//bool operator==(const dene&) {
@@ -47,7 +47,11 @@ struct dene{
 	bool operator>=(const dene&) const {
 		return true;
 	}	
-	bool operator=(const dene&) const {
+	bool operator=(const dene&) const{
+		return true;
+	}
+	
+	bool operator=(dene&&) noexcept{
 		return true;
 	}
 	
@@ -57,7 +61,7 @@ struct dene{
 
 	dene() {}
 	dene(const dene&) {}
- dene(const dene&&) {}
+ dene(dene&&) noexcept {}
 };
 
 class MyClass {
@@ -65,7 +69,15 @@ class MyClass {
 		return aaa;
 	}
 
+	//inline void setaaa(const dene& value) {
+	//	aaa = value;
+	//}
+
 	inline void setaaa(const dene& value) {
+		aaa = value;
+	}
+
+	inline void movesetaaa(dene&& value) {
 		aaa = value;
 	}
 public:
@@ -80,7 +92,7 @@ public:
 	}
 
 	Property<&getValue, &setValue > valueProperty = *this;
-	Property<&getaaa, &MyClass::setaaa> valuePropertyaaa = *this;
+	Property<&getaaa, &setaaa, &movesetaaa> valuePropertyaaa = *this;
 private:
 	int value_;
 	dene aaa;
@@ -100,6 +112,11 @@ public:
 
 };
 
+dene&& aabh() {
+	MyClass	obj1;
+	return move(obj1.valuePropertyaaa.operator dene &());
+}
+
  
 int main() {
 	MyClass1 obj;
@@ -109,13 +126,17 @@ int main() {
 	dene ddd = {};
 	MyClass	obj1;
 	MyClass	obj2;
-	obj1.valueProperty += 5;
+	auto a=obj1.valueProperty += 5;
 
 	//obj1.valuePropertyaaa.operator dene &() += ddd;
-	auto ssss=obj1.valuePropertyaaa += ddd;
+	auto ssss=obj1.valuePropertyaaa *= ddd;
 
-	auto aaa = obj1.valuePropertyaaa + ddd;
-	auto aaa1 = obj1.valuePropertyaaa + obj2.valuePropertyaaa;
+	auto aaa = obj1.valuePropertyaaa * ddd;
+	auto aaa1 = obj1.valuePropertyaaa * obj2.valuePropertyaaa;
+	
+	auto sadasd = obj2.valuePropertyaaa = obj1.valuePropertyaaa;
+
+	dene ss = aabh();
 
 	obj1.valuePropertyaaa = 5;
 
