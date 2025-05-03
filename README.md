@@ -50,10 +50,6 @@ int main() {
 - `Deducing this` is not supported for getter and setter functions.
 - only this initialization with `this` is supported.
 
-```cpp
-// Example of unsupported feature
-Property myProperty = 10; // Error: Type deduction not supported
-```
 
 ```cpp
 // Example of unsupported feature
