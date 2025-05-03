@@ -28,6 +28,10 @@ concept NonArithmetic = !is_arithmetic_v<T> && !is_pointer_v<T>;
 template<typename T>
 concept Arithmetic = is_arithmetic_v<T> || is_pointer_v<T>;
 
+template<typename T, typename ClassType>
+concept IsThisPointer = is_same_v<remove_pointer_t<remove_cvref_t<T>>, ClassType> && is_pointer_v<T>;
+//concept IsThisPointer = is_same_v<remove_cvref_t<T>, ClassType> && is_pointer_v<T>;
+
 template<auto Getter, auto Setter = nullptr, auto MoveSetter=Setter>
 	requires(is_member_function_pointer_v<decltype(Getter)> && (Setter == nullptr || is_member_function_pointer_v<decltype(Setter)>))
 class Property {
@@ -49,13 +53,19 @@ class Property {
 	class GetterInfo<VT(C::*)() volatile> : public GetterInfo<VT(C::*)()> {}; //volatile GetterInfo pointer
 
 public:
-	//Property(const Property&) = delete;
-	//Property(Property&&) = delete;
+	Property(const Property&) = delete;
+	Property(Property&&) = delete;
 
 	using ClassType = GetterInfo<decltype(Getter)>::ClassType;
 	using GetterType = GetterInfo<decltype(Getter)>::ReturnType;
 	using ValueType = remove_reference<GetterType>::type;
-	Property(ClassType& instance) : instance_(instance) {}
+	friend ClassType;
+private:
+
+	Property(ClassType * instance) : instance_(*instance) {}
+
+public:
+
 	template <auto S = Setter>
 		requires(S != nullptr)
 	Property(ClassType& instance, const ValueType& value) : instance_(instance) { set(value); }
@@ -88,8 +98,8 @@ public:
 
 	template<auto S = Setter>
 		requires(S != nullptr)
-	inline auto&& operator=(ValueType& value) {
-		set(value);
+	inline auto&& operator=(ValueType&& value) {
+		set(move(value));
 		return move(*this);
 	}
 
@@ -100,7 +110,7 @@ public:
 	}
 
 	template<typename T, auto S = Setter>
-		requires(S != nullptr && !is_same_v<T, ValueType>&& has_assignment < ValueType&&, decltype(declval<T&&>().operator ValueType& ())> ::value&& is_same_v<remove_reference_t<T>, Property>)
+		requires(S != nullptr && !is_same_v<T, ValueType>&& has_assignment <ValueType&&, decltype(declval<T&&>().operator ValueType& ())> ::value&& is_same_v<remove_reference_t<T>, Property>)
 	inline auto&& operator=(T&& value) {
 		return move(get() = move(value.operator ValueType&()));
 	}
@@ -530,7 +540,7 @@ inline auto&& operator^(Property<Getter, Setter>& pr, U&& value)
 {
 	return move(pr.get() ^ value);
 }
-template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = U::ValueType>
+template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = Property<Getter, Setter, MoveSetter>::ValueType>
 	requires(has_left_shift<T&&, U&&>::value)
 inline auto&& operator<<(Property<Getter, Setter, MoveSetter>& pr, U& value)
 {
@@ -542,6 +552,21 @@ inline auto&& operator<<(Property<Getter, Setter>& pr, U&& value)
 {
 	return move(pr.get() << value);
 }
+
+template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = Property<Getter, Setter, MoveSetter>::ValueType>
+	requires(has_left_shift<U&&, T&&>::value)
+inline auto&& operator<<(U&& value, Property<Getter, Setter>& pr)
+{
+	return move(value << pr.get());
+}
+
+template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = Property<Getter, Setter, MoveSetter>::ValueType>
+	requires(has_left_shift<U&&, T&&>::value)
+inline auto&& operator<<(U&& value, const Property<Getter, Setter, MoveSetter>& pr)
+{
+	return move(value << pr.get());
+}
+
 template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = U::ValueType>
 	requires(has_right_shift<T&&, U&&>::value)
 inline auto&& operator>>(Property<Getter, Setter, MoveSetter>& pr, U& value)
@@ -553,6 +578,19 @@ template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = P
 inline auto&& operator>>(Property<Getter, Setter>& pr, U&& value)
 {
 	return move(pr.get() >> value);
+}
+
+template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = Property<Getter, Setter, MoveSetter>::ValueType>
+	requires(has_right_shift<U&&, T&&>::value)
+inline auto&& operator>>(U&& value, Property<Getter, Setter>& pr)
+{
+	return move(value >> pr.get());
+}
+template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = Property<Getter, Setter, MoveSetter>::ValueType>
+	requires(has_right_shift<U&&, T&&>::value)
+inline auto&& operator>>(U&& value, const Property<Getter, Setter, MoveSetter>& pr)
+{
+	return move(value >> pr.get());
 }
 
 #ifdef _MSC_VER

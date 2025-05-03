@@ -91,8 +91,8 @@ public:
 		value_ = value;
 	}
 
-	Property<&getValue, &setValue > valueProperty = *this;
-	Property<&getaaa, &setaaa, &movesetaaa> valuePropertyaaa = *this;
+	Property<&getValue, &setValue > valueProperty = this;
+	Property<&getaaa, &setaaa, &movesetaaa> valuePropertyaaa = this;
 private:
 	int value_;
 	dene aaa;
@@ -106,16 +106,16 @@ public:
 		return 9;
 	}
 
-	Property<&MyClass1::getValue> valueProperty = *this;
+	Property<&MyClass1::getValue> valueProperty = this;
 
 
 
 };
 
-//dene&& aabh() {
-//	MyClass	obj1;
-//	return move(obj1.valuePropertyaaa.operator dene &());
-//}
+dene&& aabh() {
+	MyClass	obj1;
+	return move(obj1.valuePropertyaaa.operator dene &());
+}
 
  
 int main() {
@@ -126,6 +126,8 @@ int main() {
 	dene ddd = {};
 	MyClass	obj1;
 	MyClass	obj2;
+	obj1.valueProperty = 3;
+
 	auto a=obj1.valueProperty += 5;
 
 	//obj1.valuePropertyaaa.operator dene &() += ddd;

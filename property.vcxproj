@@ -129,13 +129,13 @@
   <ItemGroup>
     <ClCompile Include="examples\example2.cpp" />
     <ClCompile Include="examples\example1.cpp" />
+    <ClCompile Include="examples\example3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\checkoperator.h" />
     <ClInclude Include="includes\property.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="notlar.md" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>

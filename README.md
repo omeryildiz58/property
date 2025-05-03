@@ -22,26 +22,50 @@ This library provides `Property` classes for C++.
 #include "property.h"
 
 class MyClass {
-int myProperty;
+	int myProperty_;
 public:
 	MyClass(){}
-	void setMyProperty(int value) {
-		myProperty = value;
+	void setMyProperty(const int& value) {
+		myProperty_ = value;
 	}
-	int getMyProperty() const {
-		return myProperty;
+	int& getMyProperty() {
+		return myProperty_;
 	}
 	Property<&getMyProperty, &setMyProperty> myProperty=this;
+
 };
 
 int main() {
 	MyClass obj;
+
 	obj.myProperty = 10; // Calls setMyProperty(10)
 	int value = obj.myProperty; // Calls getMyProperty()
 	return 0;
 }
 ```
 
+## Notes
+
+- Lambdas are not supported in this version for getter and setter functions.
+- Deducing the type of the property is not supported.
+- only this initialization with `this` is supported.
+
+```cpp
+// Example of unsupported feature
+Property myProperty = 10; // Error: Type deduction not supported
+```
+
+```cpp
+// Example of unsupported feature
+	MyClass obj;
+	Property<&getMyProperty, &setMyProperty> myProperty=&obj;// Error
+	Property<&getMyProperty, &setMyProperty> myProperty=this;//	OK
+```
+
+
 ## License
+
+This library is licensed under the Apache License, Version 2.0.  
+See the LICENSE file for details.
 
 
