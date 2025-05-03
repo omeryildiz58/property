@@ -48,7 +48,8 @@ int main() {
 
 - Lambdas are not supported in this version for getter and setter functions.
 - `Deducing this` is not supported for getter and setter functions.
-- only this initialization with `this` is supported.
+- Only this initialization with `this` is supported.
+- If you want to use `Property` with read only, only getter must be defined.
 
 ```cpp
 // Example of unsupported feature
