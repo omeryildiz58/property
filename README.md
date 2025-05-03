@@ -51,10 +51,6 @@ int main() {
 - Only this initialization with `this` is supported.
 - If you want to use `Property` with read only, only getter must be defined.
 
-```cpp
-// Example of unsupported feature
-Property myProperty = 10; // Error: Type deduction not supported
-```
 
 ```cpp
 // Example of unsupported feature
