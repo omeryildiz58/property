@@ -1,5 +1,5 @@
 
-# GB C++ Property Template Library
+# C++ Property Template Library
 
 This library is a template library for properties in C++.
 
