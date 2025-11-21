@@ -29,7 +29,7 @@ template<typename T>
 concept Arithmetic = is_arithmetic_v<T> || is_pointer_v<T>;
 
 template<typename T>
-concept Moveable = std::is_rvalue_reference_v<T>;
+concept Moveable = is_rvalue_reference_v<T&&> && !is_array_v<remove_reference_t<T>>;
 
 template<typename T, typename ClassType>
 concept IsThisPointer = is_same_v<remove_pointer_t<remove_cvref_t<T>>, ClassType> && is_pointer_v<T>;
@@ -81,15 +81,15 @@ public:
 		return (instance_.*Getter)();
 	}
 
-	template<auto S = Setter>
-		requires(S != nullptr and !Moveable<ValueType>)
-	inline void set(const ValueType& value) {
+	template<typename T, auto S = Setter>
+		requires(S != nullptr and !Moveable<T>)
+	inline void set(const T& value) {
 		(instance_.*Setter)(value);
 	}
 
-	template<auto S = MoveSetter>
-		requires(S != nullptr && Moveable<ValueType>)
-	inline void set(ValueType&& value) {
+	template<typename T, auto S = MoveSetter>
+		requires(S != nullptr && Moveable<T>)
+	inline void set(T&& value) {
 		(instance_.*MoveSetter)(move(value));
 	}
 
@@ -99,16 +99,16 @@ public:
 		return move(static_cast<T>(get()));
 	}
 
-	template<auto S = MoveSetter>
-		requires(S != nullptr && Moveable<ValueType>)
-	inline auto&& operator=(ValueType&& value) {
+	template<typename T, auto S = MoveSetter>
+		requires(S != nullptr && Moveable<T>)
+	inline auto&& operator=(T&& value) {
 		set(move(value));
 		return move(*this);
 	}
 
-	template<auto S = Setter>
-		requires(S != nullptr && !Moveable<ValueType>)
-	inline auto&& operator=(const ValueType& value) {
+	template<typename T,auto S = Setter>
+		requires(S != nullptr && !Moveable<T>)
+	inline auto&& operator=(const T& value) {
 		set(value);
 		return *this;
 	}
