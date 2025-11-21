@@ -18,7 +18,7 @@
 #pragma clang diagnostic ignored "-Wdeprecated-copy"
 #pragma clang diagnostic ignored "-Wreturn-local-addr"
 #endif
-#include "checkoperator.h"
+#include <musCheckOperator.h>
 #include <type_traits>
 using	namespace std;
 

@@ -9,13 +9,13 @@ This library provides `Property` classes for C++.
 
 - Getter and Setter methods for easy access.
 - Operator support (`+=`, `-=`, etc.).
-- Modern C++ (C++20) support.
+- Modern C++ (C++23) support.
 
 ## Installation
 
 - C++20 compatible compiler (e.g., GCC, Clang, MSVC).
 - Include the `property.h` and `checkoperator.h` files in your project.
-- Check compiler flags (e.g., `/std:c++20` for MSVC).
+- Check compiler flags (e.g., `/std:c++23` for MSVC).
 
 ## Example Usage
 ```cpp

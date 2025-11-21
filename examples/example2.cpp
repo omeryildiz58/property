@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../includes/property.h"
+#include <musProperty.h>
 
 struct dene{
 	//dene& operator+=(const dene& d) {
