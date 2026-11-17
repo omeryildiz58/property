@@ -1,0 +1,47 @@
+{
+  "examples/example1.cpp": {
+    "mtime": 1794517380.655672,
+    "seen": 1794921484.5900564,
+    "ast_hash": "4808fe570a2d9e2b0d46747537d1121b",
+    "semantic_hash": "4808fe570a2d9e2b0d46747537d1121b"
+  },
+  "examples/example2.cpp": {
+    "mtime": 1794517380.655672,
+    "seen": 1794921484.590071,
+    "ast_hash": "e35daf462209e2b28a6b8e7094e07d88",
+    "semantic_hash": "e35daf462209e2b28a6b8e7094e07d88"
+  },
+  "examples/example3.cpp": {
+    "mtime": 1794517380.655672,
+    "seen": 1794921484.5900733,
+    "ast_hash": "3b6cec4bfbbb19cc432f1c2228745863",
+    "semantic_hash": "3b6cec4bfbbb19cc432f1c2228745863"
+  },
+  "includes/musCheckOperator.h": {
+    "mtime": 1794517380.655672,
+    "seen": 1794922079.961122,
+    "ast_hash": "37d8932bf5965b378938687f043f923d",
+    "semantic_hash": "37d8932bf5965b378938687f043f923d",
+    "language": "language=.cpp"
+  },
+  "includes/musProperty.h": {
+    "mtime": 1794517380.656672,
+    "seen": 1794922079.961151,
+    "ast_hash": "386e5232e9938c8ef0a0825e40905aef",
+    "semantic_hash": "386e5232e9938c8ef0a0825e40905aef",
+    "language": "language=.cpp"
+  },
+  "property.sln": {
+    "mtime": 1794517380.656672,
+    "seen": 1794921484.5900774,
+    "ast_hash": "04560cca9880f9952d84ec9ea6dd0c84",
+    "semantic_hash": "04560cca9880f9952d84ec9ea6dd0c84"
+  },
+  ".claude/settings.json": {
+    "mtime": 1794922024.3344631,
+    "seen": 1794922079.9609196,
+    "ast_hash": "0a0ef578e59e2bb38c69f1dcb49a0e1a",
+    "semantic_hash": "0a0ef578e59e2bb38c69f1dcb49a0e1a",
+    "ast_empty": true
+  }
+}

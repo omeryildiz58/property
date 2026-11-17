@@ -1,0 +1,8 @@
+.graphify_python
+.graphify_root
+.graphify_analysis.json
+.graphify_detect.json
+.graphify_uncached.txt
+.graphify_cached.json
+cache/
+converted/
