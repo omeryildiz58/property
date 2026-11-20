@@ -7,16 +7,16 @@
 #pragma warning(disable : 4626)
 #pragma warning(disable : 5027)
 #pragma warning(disable : 4172)
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#pragma clang diagnostic ignored "-Wdeprecated-copy"
+#pragma clang diagnostic ignored "-Wunknown-warning-option"
 #elif defined(__GNUC__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #pragma GCC diagnostic ignored "-Wdeprecated-copy"
 #pragma GCC diagnostic ignored "-Wreturn-local-addr"
-#elif defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#pragma clang diagnostic ignored "-Wdeprecated-copy"
-#pragma clang diagnostic ignored "-Wreturn-local-addr"
 #endif
 #include <musCheckOperator.h>
 #include <type_traits>
@@ -59,9 +59,9 @@ public:
 	Property(const Property&) = delete;
 	Property(Property&&) = delete;
 
-	using ClassType = GetterInfo<decltype(Getter)>::ClassType;
-	using GetterType = GetterInfo<decltype(Getter)>::ReturnType;
-	using ValueType = remove_reference<GetterType>::type;
+	using ClassType = typename GetterInfo<decltype(Getter)>::ClassType;
+	using GetterType = typename GetterInfo<decltype(Getter)>::ReturnType;
+	using ValueType = typename remove_reference<GetterType>::type;
 	using ReturnType = std::conditional_t<
 		std::is_lvalue_reference_v<GetterType>,
 		GetterType,  // Eðer T& dönüyorsa, T& olarak kalsýn (Referans performansý)
@@ -422,187 +422,187 @@ private:
 	ClassType& instance_;
 };
 
-template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = U::ValueType>
+template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = typename U::ValueType>
 	requires(has_equal<T&&, U&&>::value)
 inline auto&& operator==(Property<Getter, Setter, MoveSetter>& pr, U& value)
 {
 	return move(pr.get() == value);
 }
 
-template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = Property<Getter, Setter, MoveSetter>::ValueType>
+template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = typename Property<Getter, Setter, MoveSetter>::ValueType>
 	requires(has_equal<T&&, U&&>::value)
 inline auto&& operator==(Property<Getter, Setter>& pr, U&& value)
 {
 	return move(pr.get() == value);
 }
 
-template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = U::ValueType>
+template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = typename U::ValueType>
 	requires(has_not_equal<T&&, U&&>::value)
 inline auto&& operator!=(Property<Getter, Setter, MoveSetter>& pr, U& value)
 {
 	return move(pr.get() != value);
 }
-template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = Property<Getter, Setter, MoveSetter>::ValueType>
+template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = typename Property<Getter, Setter, MoveSetter>::ValueType>
 	requires(has_not_equal<T&&, U&&>::value)
 inline auto&& operator!=(Property<Getter, Setter>& pr, U&& value)
 {
 	return move(pr.get() != value);
 }
-template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = U::ValueType>
+template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = typename U::ValueType>
 	requires(has_less<T&&, U&&>::value)
 inline auto&& operator<(Property<Getter, Setter, MoveSetter>& pr, U& value)
 {
 	return move(pr.get() < value);
 }
-template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = Property<Getter, Setter, MoveSetter>::ValueType>
+template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = typename Property<Getter, Setter, MoveSetter>::ValueType>
 	requires(has_less<T&&, U&&>::value)
 inline auto&& operator<(Property<Getter, Setter, MoveSetter>& pr, U&& value)
 {
 	return move(pr.get() < value);
 }
-template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = U::ValueType>
+template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = typename U::ValueType>
 	requires(has_greater<T&&, U&&>::value)
 inline auto&& operator>(Property<Getter, Setter, MoveSetter>& pr, U& value)
 {
 	return move(pr.get() > value);
 }
-template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = Property<Getter, Setter, MoveSetter>::ValueType>
+template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = typename Property<Getter, Setter, MoveSetter>::ValueType>
 	requires(has_greater<T&&, U&&>::value)
 inline auto&& operator>(Property<Getter, Setter>& pr, U&& value)
 {
 	return move(pr.get() > value);
 }
-template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = U::ValueType>
+template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = typename U::ValueType>
 	requires(has_less_equal<T&&, U&&>::value)
 inline auto&& operator<=(Property<Getter, Setter, MoveSetter>& pr, U& value)
 {
 	return move(pr.get() <= value);
 }
-template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = Property<Getter, Setter, MoveSetter>::ValueType>
+template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = typename Property<Getter, Setter, MoveSetter>::ValueType>
 	requires(has_less_equal<T&&, U&&>::value)
 inline auto&& operator<=(Property<Getter, Setter>& pr, U&& value)
 {
 	return move(pr.get() <= value);
 }
-template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = U::ValueType>
+template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = typename U::ValueType>
 	requires(has_greater_equal<T&&, U&&>::value)
 inline auto&& operator>=(Property<Getter, Setter, MoveSetter>& pr, U& value)
 {
 	return move(pr.get() >= value);
 }
-template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = Property<Getter, Setter, MoveSetter>::ValueType>
+template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = typename Property<Getter, Setter, MoveSetter>::ValueType>
 	requires(has_greater_equal<T&&, U&&>::value)
 inline auto&& operator>=(Property<Getter, Setter>& pr, U&& value)
 {
 	return move(pr.get() >= value);
 }
-template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = U::ValueType>
+template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = typename U::ValueType>
 	requires(has_logical_and<T&&, U&&>::value)
 inline auto&& operator&&(Property<Getter, Setter, MoveSetter>& pr, U& value)
 {
 	return move(pr.get() && value);
 }
-template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = Property<Getter, Setter, MoveSetter>::ValueType>
+template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = typename Property<Getter, Setter, MoveSetter>::ValueType>
 	requires(has_logical_and<T&&, U&&>::value)
 inline auto&& operator&&(Property<Getter, Setter>& pr, U&& value)
 {
 	return move(pr.get() && value);
 }
-template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = U::ValueType>
+template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = typename U::ValueType>
 	requires(has_logical_or<T&&, U&&>::value)
 inline auto&& operator||(Property<Getter, Setter, MoveSetter>& pr, U& value)
 {
 	return move(pr.get() || value);
 }
-template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = Property<Getter, Setter, MoveSetter>::ValueType>
+template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = typename Property<Getter, Setter, MoveSetter>::ValueType>
 	requires(has_logical_or<T&&, U&&>::value)
 inline auto&& operator||(Property<Getter, Setter>& pr, U&& value)
 {
 	return move(pr.get() || value);
 }
-template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = U::ValueType>
+template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = typename U::ValueType>
 	requires(has_bitwise_and<T&&, U&&>::value)
 inline auto&& operator&(Property<Getter, Setter, MoveSetter>& pr, U& value)
 {
 	return move(pr.get() & value);
 }
-template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = Property<Getter, Setter, MoveSetter>::ValueType>
+template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = typename Property<Getter, Setter, MoveSetter>::ValueType>
 	requires(has_bitwise_and<T&&, U&&>::value)
 inline auto&& operator&(Property<Getter, Setter>& pr, U&& value)
 {
 	return move(pr.get() & value);
 }
-template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = U::ValueType>
+template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = typename U::ValueType>
 	requires(has_bitwise_or<T&&, U&&>::value)
 inline auto&& operator|(Property<Getter, Setter, MoveSetter>& pr, U& value)
 {
 	return move(pr.get() | value);
 }
-template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = Property<Getter, Setter, MoveSetter>::ValueType>
+template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = typename Property<Getter, Setter, MoveSetter>::ValueType>
 	requires(has_bitwise_or<T&&, U&&>::value)
 inline auto&& operator|(Property<Getter, Setter>& pr, U&& value)
 {
 	return move(pr.get() | value);
 }
-template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = U::ValueType>
+template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = typename U::ValueType>
 	requires(has_bitwise_xor<T&&, U&&>::value)
 inline auto&& operator^(Property<Getter, Setter, MoveSetter>& pr, U& value)
 {
 	return move(pr.get() ^ value);
 }
-template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = Property<Getter, Setter, MoveSetter>::ValueType>
+template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = typename Property<Getter, Setter, MoveSetter>::ValueType>
 	requires(has_bitwise_xor<T&&, U&&>::value)
 inline auto&& operator^(Property<Getter, Setter>& pr, U&& value)
 {
 	return move(pr.get() ^ value);
 }
-template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = Property<Getter, Setter, MoveSetter>::ValueType>
+template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = typename Property<Getter, Setter, MoveSetter>::ValueType>
 	requires(has_left_shift<T&&, U&&>::value)
 inline auto&& operator<<(Property<Getter, Setter, MoveSetter>& pr, U& value)
 {
 	return move(pr.get() << value);
 }
-template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = Property<Getter, Setter, MoveSetter>::ValueType>
+template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = typename Property<Getter, Setter, MoveSetter>::ValueType>
 	requires(has_left_shift<T&&, U&&>::value)
 inline auto&& operator<<(Property<Getter, Setter>& pr, U&& value)
 {
 	return move(pr.get() << value);
 }
 
-template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = Property<Getter, Setter, MoveSetter>::ValueType>
+template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = typename Property<Getter, Setter, MoveSetter>::ValueType>
 	requires(has_left_shift<U&&, T&&>::value)
 inline auto&& operator<<(U&& value, Property<Getter, Setter>& pr)
 {
 	return move(value << pr.get());
 }
 
-template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = Property<Getter, Setter, MoveSetter>::ValueType>
+template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = typename Property<Getter, Setter, MoveSetter>::ValueType>
 	requires(has_left_shift<U&&, T&&>::value)
 inline auto&& operator<<(U&& value, const Property<Getter, Setter, MoveSetter>& pr)
 {
 	return move(value << pr.get());
 }
 
-template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = U::ValueType>
+template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = typename U::ValueType>
 	requires(has_right_shift<T&&, U&&>::value)
 inline auto&& operator>>(Property<Getter, Setter, MoveSetter>& pr, U& value)
 {
 	return move(pr.get() >> value);
 }
-template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = Property<Getter, Setter, MoveSetter>::ValueType>
+template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = typename Property<Getter, Setter, MoveSetter>::ValueType>
 	requires(has_right_shift<T&&, U&&>::value)
 inline auto&& operator>>(Property<Getter, Setter>& pr, U&& value)
 {
 	return move(pr.get() >> value);
 }
 
-template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = Property<Getter, Setter, MoveSetter>::ValueType>
+template<Arithmetic U, auto Getter, auto Setter, auto MoveSetter, typename T = typename Property<Getter, Setter, MoveSetter>::ValueType>
 	requires(has_right_shift<U&&, T&&>::value)
 inline auto&& operator>>(U&& value, Property<Getter, Setter>& pr)
 {
 	return move(value >> pr.get());
 }
-template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = Property<Getter, Setter, MoveSetter>::ValueType>
+template<auto Getter, auto Setter, auto MoveSetter, NonArithmetic U = Property<Getter, Setter, MoveSetter>, typename T = typename Property<Getter, Setter, MoveSetter>::ValueType>
 	requires(has_right_shift<U&&, T&&>::value)
 inline auto&& operator>>(U&& value, const Property<Getter, Setter, MoveSetter>& pr)
 {
@@ -611,10 +611,10 @@ inline auto&& operator>>(U&& value, const Property<Getter, Setter, MoveSetter>& 
 
 #ifdef _MSC_VER
 #pragma warning(pop)
-#elif defined(__GNUC__)
-#pragma GCC diagnostic pop
 #elif defined(__clang__)
 #pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
 #endif
 
 #endif	// PROPERTY_H_
