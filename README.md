@@ -76,9 +76,23 @@ public:
 ```
 
 
+## Build & Test (CMake + CTest)
+
+```bash
+cmake --preset linux-release
+cmake --build out/build/linux-release
+ctest --test-dir out/build/linux-release --output-on-failure
+```
+
+## CI/CD & Automated Releases
+
+- **CI (`.github/workflows/ci.yml`):** Verifies C++23 compilation and `test_property` across Linux (GCC & Clang), Windows (MSVC x64), and macOS (Universal `arm64;x86_64`).
+- **Release Please (`.github/workflows/release-please.yml`):** Merges to `master` using Conventional Commits automatically maintain a Release PR, create version tags/GitHub Releases, and attach Windows/Linux/macOS SDK packages with SHA-256 checksums.
+
 ## License
 
 This library is licensed under the Apache License, Version 2.0.  
 See the LICENSE file for details.
+
 
 

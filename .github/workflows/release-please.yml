@@ -1,0 +1,106 @@
+name: Release Please
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          config-file: .release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  package:
+    name: Release Package (${{ matrix.label }})
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: linux-x64
+            os: ubuntu-latest
+            preset: linux-release
+            archive_ext: tar.gz
+          - label: windows-x64
+            os: windows-latest
+            preset: x64-release
+            archive_ext: zip
+          - label: macos-universal
+            os: macos-latest
+            preset: macos-release
+            archive_ext: tar.gz
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release-please.outputs.tag_name }}
+
+      - name: Setup Linux dependencies
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+
+      - name: Setup macOS dependencies
+        if: runner.os == 'macOS'
+        run: brew install ninja
+
+      - name: Setup MSVC x64
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Configure, Build, and Test
+        run: |
+          cmake --preset ${{ matrix.preset }}
+          cmake --build out/build/${{ matrix.preset }} --parallel
+          ctest --test-dir out/build/${{ matrix.preset }} --output-on-failure
+
+      - name: Stage and Package (Unix)
+        if: runner.os != 'Windows'
+        env:
+          TAG: ${{ needs.release-please.outputs.tag_name }}
+          LABEL: ${{ matrix.label }}
+        run: |
+          PKG_DIR="property-${TAG}-${LABEL}"
+          cmake --install out/build/${{ matrix.preset }} --prefix "dist/${PKG_DIR}"
+          mkdir -p release-assets
+          tar -czf "release-assets/${PKG_DIR}.tar.gz" -C dist "${PKG_DIR}"
+          if command -v sha256sum >/dev/null 2>&1; then
+            (cd release-assets && sha256sum "${PKG_DIR}.tar.gz" > "${PKG_DIR}.tar.gz.sha256")
+          else
+            (cd release-assets && shasum -a 256 "${PKG_DIR}.tar.gz" > "${PKG_DIR}.tar.gz.sha256")
+          fi
+
+      - name: Stage and Package (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        env:
+          TAG: ${{ needs.release-please.outputs.tag_name }}
+          LABEL: ${{ matrix.label }}
+        run: |
+          $pkgDir = "property-$env:TAG-$env:LABEL"
+          cmake --install out/build/${{ matrix.preset }} --prefix "dist/$pkgDir"
+          New-Item -ItemType Directory -Force -Path release-assets | Out-Null
+          $zipPath = "release-assets/$pkgDir.zip"
+          Compress-Archive -Path "dist/$pkgDir" -DestinationPath $zipPath -Force
+          $hash = (Get-FileHash -Algorithm SHA256 $zipPath).Hash.ToLower()
+          "$hash  $pkgDir.zip" | Out-File -Encoding ascii "$zipPath.sha256"
+
+      - name: Upload Release Assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.release-please.outputs.tag_name }}
+        run: gh release upload "$TAG" release-assets/* --clobber
