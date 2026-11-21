@@ -7,16 +7,16 @@
 #pragma warning(disable : 4626)
 #pragma warning(disable : 5027)
 #pragma warning(disable : 4172)
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#pragma clang diagnostic ignored "-Wdeprecated-copy"
+#pragma clang diagnostic ignored "-Wreturn-stack-address"
 #elif defined(__GNUC__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #pragma GCC diagnostic ignored "-Wdeprecated-copy"
 #pragma GCC diagnostic ignored "-Wreturn-local-addr"
-#elif defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#pragma clang diagnostic ignored "-Wdeprecated-copy"
-#pragma clang diagnostic ignored "-Wreturn-local-addr"
 #endif
 #include <musCheckOperator.h>
 #include <type_traits>
@@ -611,10 +611,10 @@ inline auto&& operator>>(U&& value, const Property<Getter, Setter, MoveSetter>& 
 
 #ifdef _MSC_VER
 #pragma warning(pop)
-#elif defined(__GNUC__)
-#pragma GCC diagnostic pop
 #elif defined(__clang__)
 #pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
 #endif
 
 #endif	// PROPERTY_H_
