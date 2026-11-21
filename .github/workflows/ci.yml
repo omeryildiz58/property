@@ -84,3 +84,26 @@ jobs:
 
       - name: Test
         run: ctest --test-dir out/build/macos-release --output-on-failure
+
+  wasm:
+    name: WebAssembly (Emscripten)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Ninja
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+
+      - name: Setup Emscripten SDK
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: latest
+
+      - name: Configure
+        run: emcmake cmake -S . -B out/build/wasm-release -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build out/build/wasm-release --parallel
+
+      - name: Test
+        run: node out/build/wasm-release/test_property.js
