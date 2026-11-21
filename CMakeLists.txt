@@ -7,14 +7,14 @@ add_library(musProperty INTERFACE "includes/musProperty.h" "includes/musCheckOpe
 
 target_include_directories(musProperty
     INTERFACE
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/includes>
-        $<INSTALL_INTERFACE:include>
+        ${CMAKE_CURRENT_SOURCE_DIR}/includes
 )
 
+
 if (CMAKE_VERSION VERSION_GREATER 3.8)
-    set_property(TARGET musProperty PROPERTY CXX_STANDARD 23)
-    set_property(TARGET musProperty PROPERTY CXX_STANDARD_REQUIRED ON)
-    set_property(TARGET musProperty PROPERTY CXX_EXTENSIONS OFF)
+	set_property(TARGET musProperty PROPERTY CXX_STANDARD 23)
+	set_property(TARGET musProperty PROPERTY CXX_STANDARD_REQUIRED ON)
+	set_property(TARGET musProperty PROPERTY CXX_EXTENSIONS OFF)
 endif()
 
 if (CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
