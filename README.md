@@ -87,7 +87,7 @@ ctest --test-dir out/build/linux-release --output-on-failure
 ## CI/CD & Automated Releases
 
 - **Submodule CMake Version Rule:** All repositories in the same submodule/release chain (`YILDIZ-ERP` -> `musFramework` -> `musProperty`) must keep the same `cmake_minimum_required` version (`VERSION 3.8`) so parent and child CMake policy levels match cleanly.
-- **CI (`.github/workflows/ci.yml`):** Verifies C++23 compilation and `test_property` across Linux (GCC & Clang), Windows (MSVC x64), and macOS (Universal `arm64;x86_64`).
+- **CI (`.github/workflows/ci.yml`):** Verifies C++23 compilation and `test_property` across Linux (GCC & Clang), Windows (MSVC x64), macOS (Universal `arm64;x86_64`), and WebAssembly (Emscripten).
 - **Release Please (`.github/workflows/release-please.yml`):** Merges to `master` using Conventional Commits automatically maintain a Release PR, create version tags/GitHub Releases, and attach Windows/Linux/macOS SDK packages with SHA-256 checksums.
 
 ## License
