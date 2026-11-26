@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(property VERSION 1.0.0 LANGUAGES CXX) # x-release-please-version
+project(property VERSION 1.1.0 LANGUAGES CXX) # x-release-please-version
 
 add_library(musProperty INTERFACE "includes/musProperty.h" "includes/musCheckOperator.h")
 
