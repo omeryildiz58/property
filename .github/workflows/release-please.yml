@@ -100,6 +100,7 @@ jobs:
           "$hash  $pkgDir.zip" | Out-File -Encoding ascii "$zipPath.sha256"
 
       - name: Upload Release Assets
+        shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ needs.release-please.outputs.tag_name }}
